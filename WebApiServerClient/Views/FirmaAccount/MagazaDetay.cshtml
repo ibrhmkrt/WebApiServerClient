@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "MagazaDetay";
+    Layout = "~/Views/Shared/_LayoutFirma.cshtml";
+}
+
+
+
+<script src="~/Content/js/jquery.min.js"></script>
+<section class="content">
+    <div class="box">
+        <div class="box-header">
+            <h3>Mağaza Detayi</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div id="example1_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+
+                <div class="col-sm-12">
+                    <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+                        <thead>
+                            <tr role="row">
+
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 55px;">Name</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending" style="width: 70px;">Map</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending" style="width: 70px;">Data Set</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblMagazaDetay"></tbody>
+                    </table>
+
+                    <table id="example2" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+                        <thead>
+                            <tr role="row">
+
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 55px;">Toplam Kişi</th>
+                                <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending" style="width: 70px;">Mevcut Kişi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblMagazaPerson"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h2 class="box-title">Kampanya Ekle</h2>
+                <div class="row">
+                    <div class="col-sm-10 form-group">
+                        <label>Name</label>
+                        <input type="text" placeholder="Name Here.." class="form-control" id="name" name="name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10 form-group">
+                        <label>Declaration</label>
+                        <input type="text" placeholder="Declaration Here.." class="form-control" id="declaration" name="declaration">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-10 form-group">
+                        <label>Location</label>
+                        <input type="text" placeholder="Location Here.." class="form-control" id="location" name="location">
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-lg btn-info" id="submitButton" name="submitButton" value="Ekle">
+            </div>
+            <div class="col-sm-6">
+                <h2 class="box-title">Harita</h2>
+                <div class="row">
+                    <div id="mainContent">
+                        <div id="A" class="sml">A</div>
+                        <div id="B" class="sml">B</div>
+                        <div id="C" class="sml">C</div>
+                        <div id="D" class="sml">D</div>
+                        <div id="E" class="sml">E</div>
+                        <div id="F" class="sml">F</div>
+                        <div id="G" class="sml">G</div>
+                        <div id="H" class="sml">H</div>
+                        <div id="I" class="sml">I</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+      </div>
+    
+</section>
+<script type="text/javascript">
+
+    var data_id = window.location.pathname.replace("/FirmaAccount/MagazaDetay/", "");
+    var x = window.location.search;
+    var data_tok = x.split("?");
+    var detay_token = data_tok[1];
+
+    var postUrl = "http://176.240.229.56:8080/company/store/" + data_id + "/notification";
+
+    $(document).ready(function () {
+        detayListGetir();
+        setInterval(function () { detayListGetir(); }, 3000);
+        setInterval(function () { getData(); }, 3000);
+        //$("#submitButton").click(function () {
+        //    notificationEkle();
+        //});
+    });
+    function detayListGetir() {
+        $.ajax({
+            headers: {
+                'x-access-token':detay_token,
+                'Content-Type': 'application/json'
+            },
+            url: "http://176.240.229.56:8080/company/store/" + data_id +"",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                var listString = "";
+                    listString = "<tr><td>" + data.name + "</td><td>" + data.map + " </td><td>" + data.dataSet + " </td></tr>";  
+              
+                $("#tblMagazaDetay").html(listString);
+            },
+
+        })
+
+        $.ajax({
+            headers: {
+                'x-access-token': detay_token,
+                'Content-Type': 'application/json'
+            },
+            url: "http://176.240.229.56:8080/company/store/" + data_id + "/counter",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+
+                var listString = "";
+                listString = "<tr><td>" + data.totalPersonCount + "</td><td>" + data.currentPersonCount + " </td></tr>";
+                $("#tblMagazaPerson").html(listString);
+            },
+
+        })
+       
+    }
+
+    //function notificationEkle() {
+    //    var posting = ({ name: $('#name').val(), declaration: $('#declaration').val(), location: $('#location').val() });
+    //    $.ajax({
+    //        url: postUrl,
+    //        data: posting,
+    //        type: "POST",
+    //        dataType: "json",
+    //        headers: {
+    //            'x-access-token': detay_token,
+    //            'Content-Type': 'application/json'
+    //        },
+    //        success: function (data) {
+
+    //            alert("Kayıt Başarıyla Gerçekleştirildi");
+    //            listTemizle();
+    //        },
+    //        error: function () {
+
+    //            alert("Kayıt Yaparken Bir Hata Oluştu");
+
+    //        }
+    //    });
+
+    //}
+    //function listTemizle() {
+    //    $('#name').val("");
+    //    $('#declaration').val("");
+    //    $('#location').val("");
+
+    //}
+
+    function clearMap() {
+        x = document.getElementsByClassName("sml");
+        let positions = ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
+        positions.forEach(pos => {
+            changeBackGroundColor(pos, "rgb(62, 111, 140)")
+        });
+    }
+
+    function changeBackGroundColor(elementId, color) {
+        let element = document.getElementById(elementId);
+        element.style.backgroundColor = color;
+    }
+
+    function incBackGroundColor(elementId, count) {
+        let element = document.getElementById(elementId);
+        var rgb = element.style.backgroundColor.replace("rgb(", "").replace(")", "").split(",");
+        rgb[0] = Number(rgb[0]) + count;
+        rgb[1] = 0;
+        rgb[2] = 0;
+        element.style.backgroundColor = "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+
+    }
+
+    function reqListener() {
+        data = JSON.parse(this.responseText);
+        for (i in data) {
+            console.log(i, data[i])
+            incBackGroundColor(data[i], 50);
+        }
+    }
+
+
+    function getData() {
+        clearMap()
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", reqListener);
+        oReq.open("GET", "http://176.240.229.56:8080/user/beaconframe");
+        oReq.send();
+    }
+
+   
+
+    
+</script>

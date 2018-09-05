@@ -1,0 +1,16 @@
+﻿#mainContent {
+   
+    height: 450px;
+    width: 450px;
+}
+
+.sml {
+    color: white;
+    text-align: center;
+    width: 150px;
+    height: 150px;
+    outline: 1px #555 dashed;
+    float: left;
+    background-color: rgb(62, 111, 140);
+    border-radius: 15%;
+}
